@@ -1,0 +1,5 @@
+*.sw[po]
+tags
+players.json
+venv/
+data_dir_sleeper_db/
