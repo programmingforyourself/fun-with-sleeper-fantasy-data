@@ -181,4 +181,18 @@ are `client` or `mongo`.
         fields='full_name, birth_date, fantasy_positions, status, injury_status'
     )
     [x for x in cursor]
+
+    cursor = mongo._find(
+        'players',
+        fields='full_name, news_updated, fantasy_positions, status, years_exp',
+        sort=[('years_exp', -1)],
+        limit=15
+        )
+    [x for x in cursor]
+
+    list(mongo._find(
+        'matchups',
+        fields='week, points, roster_id, matchup_id',
+        sort=[('week', 1), ('matchup_id', 1)]
+    ))
     ```
