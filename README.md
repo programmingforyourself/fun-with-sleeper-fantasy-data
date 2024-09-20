@@ -175,23 +175,30 @@ are `client` or `mongo`.
 
     mongo._find_one('players', {'player_id': '10226'})
 
+    # Youngest 7 players with an injury
     cursor = mongo._find(
         'players',
         {'injury_status': {'$ne': None}},
-        fields='full_name, birth_date, fantasy_positions, status, injury_status'
+        fields='full_name, birth_date, fantasy_positions, status, injury_status, injury_body_part',
+        sort=[('birth_date', -1)],
+        limit=7
     )
     [x for x in cursor]
 
+    # Active players with the most years of experience
     cursor = mongo._find(
         'players',
+        {'status': 'Active'},
         fields='full_name, news_updated, fantasy_positions, status, years_exp',
         sort=[('years_exp', -1)],
-        limit=15
+        limit=7
         )
     [x for x in cursor]
 
+    # The weekly matchups for the 2024 season
     list(mongo._find(
         'matchups',
+        {'season': '2024'},
         fields='week, points, roster_id, matchup_id',
         sort=[('week', 1), ('matchup_id', 1)]
     ))
