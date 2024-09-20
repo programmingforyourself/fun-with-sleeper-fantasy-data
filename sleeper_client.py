@@ -235,6 +235,7 @@ class SleeperClient(wh.WebClient):
                 matchup.update(extra)
                 match_query = {
                     'matchup_id': matchup['matchup_id'],
+                    'roster_id': matchup['roster_id'],
                     'league_id': extra['league_id'],
                     'week': extra['week'],
                     'season': extra['season']
