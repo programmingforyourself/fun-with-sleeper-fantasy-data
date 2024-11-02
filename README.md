@@ -134,6 +134,18 @@ Use the `start-sleeper-client.sh` shell script to execute the
 ./start-sleeper-client.sh
 ```
 
+or
+
+```
+SLEEPER_LEAGUE_ID=1234567890 ./start-sleeper-client.sh
+```
+
+or
+
+```
+SLEEPER_LEAGUE_ID="123456789, 987654321" ./start-sleeper-client.sh
+```
+
 The primary objects you will be interacting with during the interactive session
 are `client` or `mongo`.
 

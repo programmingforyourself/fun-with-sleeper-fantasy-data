@@ -17,6 +17,25 @@ print('mongo.db_stats():')
 pprint(mongo.db_stats())
 
 
+def _get_league_ids_from_settings():
+    """Return a list of stringified sleeper_league_id values from settings.ini
+
+    You may also set the SLEEPER_LEAGUE_ID environment variable.
+    Multiple league IDs may be specified by separating them with a comma.
+    """
+    league_id_raw = settings['sleeper_league_id']
+    assert league_id_raw, (
+        'You must set sleeper_league_id in settings.ini '
+        'or the SLEEPER_LEAGUE_ID environment variable.'
+        '\n\nYou may specify multiple league IDs by separating them '
+        'with a comma.'
+    )
+    if type(league_id_raw) == list:
+        return [str(league_id) for league_id in league_id_raw]
+    else:
+        return [str(league_id_raw)]
+
+
 class SleeperClient(wh.WebClient):
     """
     - read-only HTTP API to access a user's leagues, drafts, and rosters
@@ -26,11 +45,8 @@ class SleeperClient(wh.WebClient):
     - stay under 1000 API calls per minute
         - status code 429 returned if too many requests
     """
-    _league_id = str(settings['sleeper_league_id'])
-    assert _league_id, (
-        'You must set sleeper_league_id in settings.ini '
-        'or the SLEEPER_LEAGUE_ID environment variable'
-    )
+    _league_ids = _get_league_ids_from_settings()
+    _league_id = _league_ids[0]
 
     def get_league(self, store=True, debug=False):
         """Get the response object from the league endpoint
