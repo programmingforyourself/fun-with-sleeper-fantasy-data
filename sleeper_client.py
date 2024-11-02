@@ -46,7 +46,6 @@ class SleeperClient(wh.WebClient):
         - status code 429 returned if too many requests
     """
     _league_ids = _get_league_ids_from_settings()
-    _league_id = _league_ids[0]
 
     def get_league(self, store=True, debug=False):
         """Get the response object from the league endpoint
@@ -54,21 +53,24 @@ class SleeperClient(wh.WebClient):
         - store: if True, save the data to database
         - debug: if True, enter debugger before returning the response object
         """
-        response = self.GET(
-            f'/league/{self._league_id}',
-            debug=debug,
-            retry=True
-        )
-        if store and response.status_code == 200:
-            match_query = {'league_id': self._league_id}
-            update_statement = {'$set': response.json()}
-            mongo._update_one(
-                settings['league_collection'],
-                match_query,
-                update_statement,
-                upsert=True
+        responses = []
+        for league_id in self._league_ids:
+            response = self.GET(
+                f'/league/{league_id}',
+                debug=debug,
+                retry=True
             )
-        return response
+            if store and response.status_code == 200:
+                match_query = {'league_id': league_id}
+                update_statement = {'$set': response.json()}
+                mongo._update_one(
+                    settings['league_collection'],
+                    match_query,
+                    update_statement,
+                    upsert=True
+                )
+            responses.append(response)
+        return responses[0] if len(responses) == 1 else responses
 
     def get_rosters(self, store=True, debug=False):
         """Get the response object from the league rosters list endpoint
@@ -76,25 +78,28 @@ class SleeperClient(wh.WebClient):
         - store: if True, save the data to database
         - debug: if True, enter debugger before returning the response object
         """
-        response = self.GET(
-            f'/league/{self._league_id}/rosters',
-            debug=debug,
-            retry=True
-        )
-        if store and response.status_code == 200:
-            for roster in response.json():
-                match_query = {
-                    'league_id': self._league_id,
-                    'owner_id': roster['owner_id']
-                }
-                update_statement = {'$set': roster}
-                mongo._update_one(
-                    settings['roster_collection'],
-                    match_query,
-                    update_statement,
-                    upsert=True
-                )
-        return response
+        responses = []
+        for league_id in self._league_ids:
+            response = self.GET(
+                f'/league/{league_id}/rosters',
+                debug=debug,
+                retry=True
+            )
+            if store and response.status_code == 200:
+                for roster in response.json():
+                    match_query = {
+                        'league_id': league_id,
+                        'owner_id': roster['owner_id']
+                    }
+                    update_statement = {'$set': roster}
+                    mongo._update_one(
+                        settings['roster_collection'],
+                        match_query,
+                        update_statement,
+                        upsert=True
+                    )
+            responses.append(response)
+        return responses[0] if len(responses) == 1 else responses
 
     def get_players(self, store=True, debug=False):
         """Get the response object from the players list endpoint
@@ -236,34 +241,37 @@ class SleeperClient(wh.WebClient):
         current_season_state = mongo.last_obj(settings['season_state_collection'])
         if not week:
             week = current_season_state['week']
-        extra = {
-            'week': week,
-            'league_id': self._league_id,
-            'season': current_season_state['season'],
-        }
-        response = self.GET(
-            f'/league/{self._league_id}/matchups/{week}',
-            debug=debug,
-            retry=True
-        )
-        if store and response.status_code == 200:
-            for matchup in response.json():
-                matchup.update(extra)
-                match_query = {
-                    'matchup_id': matchup['matchup_id'],
-                    'roster_id': matchup['roster_id'],
-                    'league_id': extra['league_id'],
-                    'week': extra['week'],
-                    'season': extra['season']
-                }
-                update_statement = {'$set': matchup}
-                mongo._update_one(
-                    settings['matchup_collection'],
-                    match_query,
-                    update_statement,
-                    upsert=True
-                )
-        return response
+        responses = []
+        for league_id in self._league_ids:
+            extra = {
+                'week': week,
+                'league_id': league_id,
+                'season': current_season_state['season'],
+            }
+            response = self.GET(
+                f'/league/{league_id}/matchups/{week}',
+                debug=debug,
+                retry=True
+            )
+            if store and response.status_code == 200:
+                for matchup in response.json():
+                    matchup.update(extra)
+                    match_query = {
+                        'matchup_id': matchup['matchup_id'],
+                        'roster_id': matchup['roster_id'],
+                        'league_id': extra['league_id'],
+                        'week': extra['week'],
+                        'season': extra['season']
+                    }
+                    update_statement = {'$set': matchup}
+                    mongo._update_one(
+                        settings['matchup_collection'],
+                        match_query,
+                        update_statement,
+                        upsert=True
+                    )
+            responses.append(response)
+        return responses[0] if len(responses) == 1 else responses
 
     def get_trending(self, store=True, debug=False):
         """Get response objects from the trending add/drop endpoints
