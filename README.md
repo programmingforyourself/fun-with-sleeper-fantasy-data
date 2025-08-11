@@ -13,8 +13,6 @@ examples.**
 
 - [Docker](https://www.docker.com) OR write access to a
   [MongoDB](https://www.mongodb.com) instance/cluster
-- [pyenv](https://github.com/pyenv/pyenv) OR Python version 3.9 or LOWER
-    - *the mongo-helper package currently has issues with Python 3.10+*
 - [Sleeper League
   ID](https://support.sleeper.com/en/articles/4121798-how-do-i-find-my-league-id)
     - *add it to the settings.ini file (next to `sleeper_league_id = `) or export
@@ -96,15 +94,10 @@ venv-setup
 
 The [venv-setup](https://github.com/kenjyco/base/blob/master/bin/venv-setup)
 script (provided by my [base repo](https://github.com/kenjyco/base)) will create
-a virtual environment named venv using the Python version in the
-`.python-version` file (if [pyenv](https://github.com/pyenv/pyenv) is
-installed), use pip to install the dependencies listed in
+a virtual environment named venv, use pip to install the dependencies listed in
 `requirements.txt`, then use pip to also install the ipython, pytest, and pdbpp
 packages. (*You can use `venv-setup-lite` to do all that except for adding the
 last 3 packages if desired*).
-
-> If you have my base repo setup, but don't have pyenv installed, you can use
-> `pyenv-install` to install it before calling `venv-setup`.
 
 ## Running
 
