@@ -37,13 +37,6 @@ packages that I maintain:
   [subprocess module](https://docs.python.org/3/library/subprocess.html), that
   includes tools for using docker to manage database containers
 
-> (9/16/24) A lot of the functionality of mongo-helper is not yet documented. I'm
-> using this as an opportunity to update documentation, implement tests, improve
-> compatibility, and add features that I wanted to add several years ago.
->
-> See the [updated README for mongo-helper](https://github.com/kenjyco/mongo-helper/blob/c3c82c80f756595bebebcfd66ff4d0957afd0547/README.md) (not yet released):
->
-
 ## What
 
 There is a `sleeper_client.py` file that loads the settings from the
