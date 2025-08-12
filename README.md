@@ -77,9 +77,8 @@ debugger (pdb or pdbpp) session right before the response object is returned.
 
 ## Setup
 
-Create a virtual environment using Python 3.9 (there is currently an issue with
-mongo-helper for Python versions greater than 3.9), then use pip to install the
-packages listed in the `requirements.txt` file.
+Create a Python virtual environment, then use pip to install the packages listed
+in the `requirements.txt` file.
 
 ```
 venv-setup
